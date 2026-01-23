@@ -1,0 +1,30 @@
+# Core Dependencies
+python>=3.8
+
+# Document Processing
+PyMuPDF>=1.23.0          # PDF processing
+python-docx>=0.8.11      # DOCX processing
+python-pptx>=0.6.21      # PPTX processing
+Pillow>=10.0.0           # Image processing
+pytesseract>=0.3.10      # OCR
+pdf2image>=1.16.3        # PDF to image conversion
+
+# Machine Learning & NLP
+sentence-transformers>=2.2.0  # Sentence embeddings
+scikit-learn>=1.3.0          # ML utilities
+numpy>=1.24.0                # Numerical operations
+faiss-cpu>=1.7.4             # Vector similarity search (use faiss-gpu for GPU)
+
+# Utilities
+tqdm>=4.66.0             # Progress bars
+python-dotenv>=1.0.0     # Environment variables
+
+# Optional but recommended
+pandas>=2.0.0            # Data manipulation
+matplotlib>=3.7.0        # Visualization
+seaborn>=0.12.0          # Statistical visualization
+
+# Development
+pytest>=7.4.0            # Testing
+black>=23.0.0            # Code formatting
+flake8>=6.0.0            # Linting# file-searching-tool
