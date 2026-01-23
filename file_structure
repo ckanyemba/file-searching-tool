@@ -1,0 +1,93 @@
+cos3701-question-search/
+│
+├── 📁 database/                         # Question storage
+│   ├── 📁 exam_papers/                  # Original exam papers (PUT YOUR FILES HERE)
+│   │   ├── COS3701_OctNov_2025.pdf
+│   │   ├── COS3701_MayJune_2024.pdf
+│   │   └── COS3701_OctNov_2023.pdf
+│   │
+│   ├── 📁 extracted_questions/          # Auto-generated JSON files
+│   │   ├── COS3701_OctNov_2025_questions.json
+│   │   ├── COS3701_MayJune_2024_questions.json
+│   │   └── COS3701_OctNov_2023_questions.json
+│   │
+│   ├── 📁 question_vectors/             # Vector embeddings for similarity search
+│   │   ├── faiss_index.bin
+│   │   └── questions_data.pkl
+│   │
+│   ├── 📄 questions_master.json         # All questions in one file
+│   └── 📄 questions_metadata.json       # Exam dates, topics, etc.
+│
+├── 📁 src/                              # Source code
+│   ├── 📄 __init__.py
+│   │
+│   ├── 📁 core/                         # Core functionality
+│   │   ├── 📄 __init__.py
+│   │   ├── 📄 question_detector.py      # Main detection logic
+│   │   ├── 📄 question_classifier.py    # Question type classification
+│   │   ├── 📄 similarity_engine.py      # Search and matching
+│   │   └── 📄 vector_store.py           # Embedding storage/retrieval
+│   │
+│   ├── 📁 utils/                        # Utilities
+│   │   ├── 📄 __init__.py
+│   │   ├── 📄 pdf_extractor.py          # Extract text from PDFs
+│   │   ├── 📄 text_cleaner.py           # Clean and normalize text
+│   │   ├── 📄 pattern_matcher.py        # Regex patterns for questions
+│   │   └── 📄 date_parser.py            # Parse exam dates
+│   │
+│   ├── 📁 models/                       # ML models
+│   │   ├── 📄 __init__.py
+│   │   └── 📄 sentence_transformer.py   # For embeddings
+│   │
+│   └── 📁 api/                          # REST API (optional)
+│       ├── 📄 __init__.py
+│       ├── 📄 app.py
+│       └── 📄 endpoints.py
+│
+├── 📁 config/                           # Configuration files
+│   ├── 📄 settings.yaml                 # Main settings
+│   ├── 📄 question_patterns.yaml        # Regex patterns for questions
+│   ├── 📄 question_types.yaml           # Question type definitions
+│   └── 📄 exam_formats.yaml             # Exam paper formats
+│
+├── 📁 scripts/                          # Utility scripts
+│   ├── 📄 extract_pdfs.py              # Bulk extract from PDFs
+│   ├── 📄 import_exam.py               # Import single exam
+│   ├── 📄 rebuild_index.py             # Rebuild search index
+│   ├── 📄 generate_reports.py          # Generate analysis reports
+│   └── 📄 export_data.py               # Export to different formats
+│
+├── 📁 reports/                          # Generated reports
+│   ├── 📄 question_analysis.md
+│   ├── 📄 exam_comparison.html
+│   └── 📄 statistics.json
+│
+├── 📁 tests/                            # Test files
+│   ├── 📄 __init__.py
+│   ├── 📄 test_question_detection.py
+│   ├── 📄 test_classification.py
+│   ├── 📄 test_search.py
+│   └── 📄 test_integration.py
+│
+├── 📁 data_samples/                     # Sample data for testing
+│   ├── 📄 sample_exam.txt
+│   ├── 📄 sample_questions.json
+│   └── 📄 test_queries.txt
+│
+├── 📁 frontend/                         # Web interface (optional)
+│   ├── 📄 index.html
+│   ├── 📄 style.css
+│   ├── 📄 app.js
+│   └── 📄 components.js
+│
+├── 📁 logs/                             # Application logs
+│   └── 📄 app.log
+│
+├── 📄 main.py                           # Main entry point
+├── 📄 cli.py                            # Command-line interface
+├── 📄 requirements.txt                  # Dependencies
+├── 📄 setup.py                          # Installation script
+├── 📄 .env.example                      # Environment variables template
+├── 📄 .gitignore                        # Git ignore file
+├── 📄 README.md                         # Project documentation
+└── 📄 LICENSE                           # License file

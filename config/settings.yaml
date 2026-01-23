@@ -1,0 +1,46 @@
+# COS3701 Question Search System Configuration
+
+# Application settings
+app:
+  name: "COS3701 Question Search"
+  version: "1.0.0"
+  debug: false
+
+# Database paths
+database:
+  root: "database"
+  exam_papers: "database/exam_papers"
+  extracted: "database/extracted_questions"
+  vectors: "database/question_vectors"
+
+# Model settings
+model:
+  name: "all-MiniLM-L6-v2"
+  dimension: 384
+  device: "cpu"  # or "cuda"
+  batch_size: 32
+
+# Search settings
+search:
+  default_top_k: 5
+  min_threshold: 0.5
+  semantic_weight: 0.7
+  string_weight: 0.3
+
+# OCR settings
+ocr:
+  language: "eng"
+  config: "--psm 6"
+  dpi: 300
+
+# Question detection
+detection:
+  min_length: 10
+  max_length: 1000
+  min_words: 3
+
+# Logging
+logging:
+  level: "INFO"
+  file: "logs/app.log"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"

@@ -1,0 +1,42 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+
+# Database
+database/exam_papers/*
+!database/exam_papers/.gitkeep
+database/extracted_questions/
+database/question_vectors/
+database/*.json
+
+# Logs
+logs/
+*.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+
+# Models cache
+.cache/
+models/
+
+# Test
+.pytest_cache/
+.coverage
+htmlcov/

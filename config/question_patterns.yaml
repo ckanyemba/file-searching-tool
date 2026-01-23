@@ -1,0 +1,42 @@
+# Question detection patterns
+
+numbered_questions:
+  - pattern: '\b\d+\.\s+'
+    description: "Standard numbering (1., 2., 3.)"
+  
+  - pattern: 'Question\s+\d+:'
+    description: "Question prefix"
+  
+  - pattern: 'Problem\s+\d+:'
+    description: "Problem prefix"
+
+sub_questions:
+  - pattern: '\([ivxlcdm]+\)'
+    description: "Roman numerals (i), ii), iii))"
+  
+  - pattern: '\([a-z]\)'
+    description: "Letter numbering (a), b), c))"
+
+keywords:
+  proof:
+    - "prove that"
+    - "show that"
+    - "demonstrate that"
+  
+  build:
+    - "build a"
+    - "construct a"
+    - "design a"
+    - "draw a"
+  
+  find:
+    - "find"
+    - "determine"
+    - "calculate"
+    - "compute"
+  
+  explain:
+    - "explain"
+    - "describe"
+    - "discuss"
+    - "define"
