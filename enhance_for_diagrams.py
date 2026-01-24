@@ -1,4 +1,12 @@
+#!/usr/bin/env python3
 """
+Enhance system for PDA diagrams and mathematical notation
+"""
+
+from pathlib import Path
+
+# Enhanced PDF extractor with better pattern matching
+enhanced_extractor = '''"""
 Enhanced Document Processor for PDA/Mathematical Content
 """
 
@@ -22,20 +30,20 @@ class DocumentProcessor:
     def __init__(self):
         self.question_patterns = [
             # Standard patterns
-            r'\b\d+\.\s+.*?(?:[.?]|$)',
-            r'Example\s+\d+.*?(?=Example|$)',
+            r'\\b\\d+\\.\\s+.*?(?:[.?]|$)',
+            r'Example\\s+\\d+.*?(?=Example|$)',
             
             # PDA/Mathematical patterns
-            r'Draw.*?(?:PDA|automaton|machine).*?(?:[.?]|(?=\n\n))',
-            r'Build.*?(?:PDA|TM|FA|automaton).*?(?:[.?]|(?=\n\n))',
-            r'L\s*=\s*\{.*?\}',  # Language definitions
-            r'Σ\s*=\s*\{.*?\}',  # Alphabet definitions
+            r'Draw.*?(?:PDA|automaton|machine).*?(?:[.?]|(?=\\n\\n))',
+            r'Build.*?(?:PDA|TM|FA|automaton).*?(?:[.?]|(?=\\n\\n))',
+            r'L\\s*=\\s*\\{.*?\\}',  # Language definitions
+            r'Σ\\s*=\\s*\\{.*?\\}',  # Alphabet definitions
             
             # Question types
-            r'\bProve that.*?[.]',
-            r'\bShow that.*?[.]',
-            r'\bFind.*?[.]',
-            r'\bConstruct.*?[.]',
+            r'\\bProve that.*?[.]',
+            r'\\bShow that.*?[.]',
+            r'\\bFind.*?[.]',
+            r'\\bConstruct.*?[.]',
         ]
     
     def extract_from_pdf(self, file_path: str) -> Dict:
@@ -92,7 +100,7 @@ class DocumentProcessor:
     def clean_mathematical_text(self, text: str) -> str:
         """Clean mathematical notation for better matching"""
         # Normalize common math symbols
-        text = re.sub(r'\s+', ' ', text)
+        text = re.sub(r'\\s+', ' ', text)
         text = text.replace('∑', 'Sigma')
         text = text.replace('Σ', 'Sigma')
         text = text.replace('∈', 'in')
@@ -116,7 +124,7 @@ class DocumentProcessor:
                     questions.append(question)
         
         # Detect Example blocks
-        example_pattern = r'Example\s+\d+\s*([\s\S]*?)(?=Example\s+\d+|$)'
+        example_pattern = r'Example\\s+\\d+\\s*([\\s\\S]*?)(?=Example\\s+\\d+|$)'
         for match in re.finditer(example_pattern, text_clean, re.IGNORECASE):
             example_text = match.group(0).strip()
             if len(example_text) > 20:
@@ -156,3 +164,23 @@ class DocumentProcessor:
                     })
         
         return all_questions
+'''
+
+# Write enhanced extractor
+Path('src/utils/pdf_extractor.py').write_text(enhanced_extractor)
+print("✓ Enhanced PDF extractor created")
+
+print("\n" + "="*60)
+print("System Enhanced for PDA Diagrams!")
+print("="*60)
+print("\nNow the system can:")
+print("  ✅ Extract questions from PDAs")
+print("  ✅ Detect 'Draw a PDA' type questions")
+print("  ✅ Handle mathematical notation (L = {...}, Σ = {...})")
+print("  ✅ Recognize Example 1, Example 2, etc.")
+print("  ✅ Mark pages with diagrams")
+print("\nNext steps:")
+print("  1. Add your PDF: cp COS301Y-Deterministic-PDAs.pdf database/exam_papers/")
+print("  2. Rebuild index: python3 main.py --rebuild")
+print("  3. Search: 'Draw a PDA that accepts ba'")
+print("="*60 + "\n")

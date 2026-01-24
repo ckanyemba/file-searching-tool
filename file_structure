@@ -91,3 +91,10 @@ cos3701-question-search/
 ├── 📄 .gitignore                        # Git ignore file
 ├── 📄 README.md                         # Project documentation
 └── 📄 LICENSE                           # License file
+
+### Things to do
+
+1. Find a solution
+2. Search using an image
+3. Display results
+4. Open selected results
