@@ -11,16 +11,8 @@ import argparse
 import logging
 from tqdm import tqdm
 
-# Import our custom modules
-try:
-    from src.utils.pdf_extractor import DocumentProcessor
-    from src.core.similarity_engine import QuestionSimilarityEngine
-except ImportError:
-    print("Error: Could not import required modules.")
-    print("Make sure you have created the src/ directory structure.")
-    print("\nRun: python setup_project.py")
-    import sys
-    sys.exit(1)
+from src.utils.pdf_extractor import DocumentProcessor
+from src.core.similarity_engine import QuestionSimilarityEngine
 
 logging.basicConfig(
     level=logging.INFO,
@@ -128,14 +120,7 @@ class QuestionSearchSystem:
     
     def search_question(self, query: str, top_k: int = 5, 
                        search_type: str = 'semantic') -> List[Dict]:
-        """
-        Search for a question
-        
-        Args:
-            query: Question text to search for
-            top_k: Number of results to return
-            search_type: 'exact', 'semantic', or 'typed'
-        """
+        """Search for a question"""
         if search_type == 'exact':
             results = self.search_engine.find_exact_match(query)
             if results:
@@ -150,7 +135,7 @@ class QuestionSearchSystem:
         return results
     
     def display_results(self, results: List[Dict]):
-        """Display search results in a formatted way"""
+        """Display search results"""
         if not results:
             print("\nNo matching questions found.")
             return
@@ -164,27 +149,16 @@ class QuestionSearchSystem:
             if len(question_text) > 150:
                 question_text = question_text[:150] + "..."
             
-            print(f"{i}. Question:")
-            print(f"   {question_text}")
-            print(f"\n   Source: {Path(result['file']).name}")
-            
-            if 'location' in result:
-                loc = result['location']
-                if 'page' in loc:
-                    print(f"   Page: {loc['page']}")
-                elif 'slide' in loc:
-                    print(f"   Slide: {loc['slide']}")
+            print(f"{i}. {question_text}")
+            print(f"   File: {Path(result['file']).name}")
             
             if 'combined_score' in result:
-                print(f"   Similarity: {result['combined_score']:.1%}")
-            
-            if 'question_type' in result:
-                print(f"   Type: {result['question_type']}")
+                print(f"   Score: {result['combined_score']:.1%}")
             
             print(f"{'-'*80}\n")
     
     def generate_statistics(self) -> Dict:
-        """Generate statistics about the question database"""
+        """Generate statistics"""
         if not self.all_questions:
             return {}
         
@@ -195,12 +169,10 @@ class QuestionSearchSystem:
         }
         
         for q in self.all_questions:
-            # Count by file
             filename = Path(q['file']).name
             stats['questions_by_file'][filename] = \
                 stats['questions_by_file'].get(filename, 0) + 1
             
-            # Count by type
             if 'type' in q:
                 q_type = q['type']
                 stats['questions_by_type'][q_type] = \
@@ -223,16 +195,13 @@ class QuestionSearchSystem:
             self.build_search_index()
         
         stats = self.generate_statistics()
-        print(f"\nDatabase contains {stats['total_questions']} questions")
-        print("\nCommands:")
-        print("  - Enter a question to search")
-        print("  - 'stats' to show statistics")
-        print("  - 'quit' to exit")
+        print(f"\nDatabase: {stats['total_questions']} questions")
+        print("\nCommands: search query, 'stats', or 'quit'")
         print("="*80 + "\n")
         
         while True:
             try:
-                query = input("\nEnter question (or command): ").strip()
+                query = input("Enter question: ").strip()
                 
                 if not query:
                     continue
@@ -242,17 +211,11 @@ class QuestionSearchSystem:
                     break
                 
                 if query.lower() == 'stats':
-                    print("\nDatabase Statistics:")
-                    print(f"Total Questions: {stats['total_questions']}")
-                    print("\nQuestions by File:")
-                    for filename, count in stats['questions_by_file'].items():
-                        print(f"  - {filename}: {count}")
-                    print("\nQuestions by Type:")
-                    for q_type, count in stats['questions_by_type'].items():
-                        print(f"  - {q_type}: {count}")
+                    print(f"\nTotal: {stats['total_questions']}")
+                    for f, c in stats['questions_by_file'].items():
+                        print(f"  {f}: {c}")
                     continue
                 
-                # Search
                 results = self.search_question(query, top_k=5)
                 self.display_results(results)
                 
@@ -260,58 +223,35 @@ class QuestionSearchSystem:
                 print("\n\nGoodbye!")
                 break
             except Exception as e:
-                logger.error(f"Error during search: {e}")
+                logger.error(f"Error: {e}")
 
 
 def main():
     """Main entry point"""
-    parser = argparse.ArgumentParser(
-        description='COS3701 Question Search System'
-    )
-    parser.add_argument(
-        '--database',
-        default='database',
-        help='Path to database directory'
-    )
-    parser.add_argument(
-        '--rebuild',
-        action='store_true',
-        help='Force rebuild of question index'
-    )
-    parser.add_argument(
-        '--query',
-        help='Search for a specific question'
-    )
-    parser.add_argument(
-        '--top-k',
-        type=int,
-        default=5,
-        help='Number of results to return'
-    )
+    parser = argparse.ArgumentParser(description='COS3701 Question Search')
+    parser.add_argument('--database', default='database', help='Database path')
+    parser.add_argument('--rebuild', action='store_true', help='Rebuild index')
+    parser.add_argument('--query', help='Search query')
+    parser.add_argument('--top-k', type=int, default=5, help='Number of results')
     
     args = parser.parse_args()
     
-    # Initialize system
     system = QuestionSearchSystem(database_path=args.database)
     
     if args.rebuild:
-        logger.info("Rebuilding question database...")
+        logger.info("Rebuilding database...")
         system.extract_all_questions(force_reextract=True)
         system.build_search_index()
-        print("\n✓ Index rebuilt successfully!")
+        print("\n✓ Index rebuilt!")
         return
     
     if args.query:
-        # Single query mode
         if not system.load_search_index():
-            logger.error("Index not found. Run with --rebuild first.")
-            print("\nRun: python main.py --rebuild")
+            print("Index not found. Run: python main.py --rebuild")
             return
-        
         results = system.search_question(args.query, top_k=args.top_k)
         system.display_results(results)
     else:
-        # Interactive mode
         system.interactive_search()
 
 
