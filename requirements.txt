@@ -1,7 +1,4 @@
 # Core Dependencies
-python>=3.8
-
-# Document Processing
 PyMuPDF>=1.23.0          # PDF processing
 python-docx>=0.8.11      # DOCX processing
 python-pptx>=0.6.21      # PPTX processing

@@ -9,12 +9,12 @@ with open("requirements.txt", "r", encoding="utf-8") as fh:
 setup(
     name="cos3701-question-search",
     version="1.0.0",
-    author="Your Name",
-    author_email="your.email@example.com",
+    author="Craig Kanyemba",
+    author_email="kanyembacraig0@gmail.com",
     description="Intelligent question search system for COS3701 exam papers",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/yourusername/cos3701-question-search",
+    url="https://github.com/ckanyemba/file-searching-tool.git",
     packages=find_packages(),
     classifiers=[
         "Development Status :: 4 - Beta",
@@ -34,3 +34,4 @@ setup(
         ],
     },
 )
+

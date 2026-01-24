@@ -1,0 +1,48 @@
+# ========================================
+# 9. config/exam_formats.yaml
+# ========================================
+
+"""
+Exam Format Definitions
+Save this as: config/exam_formats.yaml
+"""
+
+EXAM_FORMATS_YAML = """
+# Exam Paper Format Definitions
+
+formats:
+  unisa_standard:
+    name: "UNISA Standard Format"
+    structure:
+      - section: "Header"
+        contains:
+          - module_code
+          - exam_date
+          - duration
+          - total_marks
+      
+      - section: "Instructions"
+        contains:
+          - general_instructions
+          - answer_requirements
+      
+      - section: "Questions"
+        numbering: "numeric"  # 1, 2, 3
+        sub_numbering: "roman"  # (i), (ii), (iii)
+    
+    markers:
+      question_start: "QUESTION"
+      marks: "[XX marks]"
+      end_of_paper: "END"
+  
+  multiple_choice:
+    name: "Multiple Choice Format"
+    structure:
+      - section: "Questions"
+        numbering: "numeric"
+        options: ["A", "B", "C", "D"]
+    
+    markers:
+      question_start: "\\d+\\."
+      option_start: "[A-D]\\)"
+"""

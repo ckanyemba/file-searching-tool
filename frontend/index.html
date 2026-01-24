@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>COS3701 Question Search</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <svg class="logo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    <h1>COS3701 Question Search</h1>
+                </div>
+                <div class="header-stats">
+                    <div class="stat">
+                        <span class="stat-label">Questions</span>
+                        <span class="stat-value" id="totalQuestions">0</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-label">Exams</span>
+                        <span class="stat-value" id="totalExams">0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+        <div class="container">
+            <!-- Search Section -->
+            <section class="search-section">
+                <div class="search-box">
+                    <div class="search-input-wrapper">
+                        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                        <input 
+                            type="text" 
+                            id="searchInput" 
+                            class="search-input" 
+                            placeholder="Search for questions... (e.g., 'Prove that PALINDROME is non-context-free')"
+                            autocomplete="off"
+                        >
+                        <button id="clearBtn" class="clear-btn" style="display: none;">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path d="M6 18L18 6M6 6l12 12" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <button id="searchBtn" class="search-btn">
+                        Search
+                    </button>
+                </div>
+
+                <!-- Search Options -->
+                <div class="search-options">
+                    <div class="option-group">
+                        <label class="option-label">Search Type:</label>
+                        <div class="radio-group">
+                            <label class="radio-label">
+                                <input type="radio" name="searchType" value="semantic" checked>
+                                <span>Semantic</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="searchType" value="exact">
+                                <span>Exact</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="searchType" value="typed">
+                                <span>By Type</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="option-group">
+                        <label class="option-label">Question Type:</label>
+                        <select id="questionTypeFilter" class="select-input">
+                            <option value="all">All Types</option>
+                            <option value="proof">Proof</option>
+                            <option value="build">Build/Construct</option>
+                            <option value="find">Find/Calculate</option>
+                            <option value="explain">Explain/Describe</option>
+                            <option value="trace">Trace</option>
+                            <option value="convert">Convert</option>
+                            <option value="draw">Draw</option>
+                        </select>
+                    </div>
+
+                    <div class="option-group">
+                        <label class="option-label">Results:</label>
+                        <select id="topKSelect" class="select-input">
+                            <option value="5">Top 5</option>
+                            <option value="10">Top 10</option>
+                            <option value="15">Top 15</option>
+                            <option value="20">Top 20</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Example Queries -->
+                <div class="example-queries">
+                    <span class="example-label">Try:</span>
+                    <button class="example-btn" data-query="Prove that PALINDROME is non-context-free">
+                        Prove PALINDROME is non-context-free
+                    </button>
+                    <button class="example-btn" data-query="Build a TM that accepts {a^n b^n}">
+                        Build TM for {a^n b^n}
+                    </button>
+                    <button class="example-btn" data-query="Show that the language is regular">
+                        Show language is regular
+                    </button>
+                </div>
+            </section>
+
+            <!-- Loading Indicator -->
+            <div id="loadingIndicator" class="loading" style="display: none;">
+                <div class="spinner"></div>
+                <p>Searching questions...</p>
+            </div>
+
+            <!-- Results Section -->
+            <section id="resultsSection" class="results-section" style="display: none;">
+                <div class="results-header">
+                    <h2 id="resultsTitle">Search Results</h2>
+                    <div class="results-actions">
+                        <button id="exportBtn" class="action-btn">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                            Export
+                        </button>
+                    </div>
+                </div>
+                <div id="resultsContainer" class="results-container"></div>
+            </section>
+
+            <!-- Empty State -->
+            <div id="emptyState" class="empty-state">
+                <svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <circle cx="11" cy="11" r="8" stroke-width="2"/>
+                    <path d="M21 21l-4.35-4.35" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                <h3>Search COS3701 Questions</h3>
+                <p>Enter a question or topic to find similar questions from past exams</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 COS3701 Question Search System</p>
+        </div>
+    </footer>
+
+    <!-- Modal for Question Details -->
+    <div id="questionModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Question Details</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBody"></div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="utils.js"></script>
+    <script src="api.js"></script>
+    <script src="components.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

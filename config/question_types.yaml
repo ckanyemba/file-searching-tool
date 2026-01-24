@@ -1,0 +1,128 @@
+# Question Type Definitions
+
+types:
+  proof:
+    keywords:
+      - prove
+      - proof
+      - demonstrate
+      - verify
+    description: "Questions asking to prove or demonstrate something"
+    examples:
+      - "Prove that PALINDROME is non-context-free"
+      - "Show that the language is regular"
+  
+  build:
+    keywords:
+      - build
+      - construct
+      - design
+      - create
+    description: "Questions asking to build or construct something"
+    examples:
+      - "Build a TM that accepts {a^n b^n}"
+      - "Construct a PDA for the language"
+  
+  draw:
+    keywords:
+      - draw
+      - sketch
+      - diagram
+      - illustrate
+    description: "Questions asking to draw or diagram something"
+    examples:
+      - "Draw an FA for the language"
+      - "Sketch a parse tree"
+  
+  find:
+    keywords:
+      - find
+      - determine
+      - calculate
+      - compute
+    description: "Questions asking to find or calculate something"
+    examples:
+      - "Find a CFG for the language"
+      - "Determine if the string is accepted"
+  
+  explain:
+    keywords:
+      - explain
+      - describe
+      - discuss
+      - define
+    description: "Questions asking for explanation or description"
+    examples:
+      - "Explain the pumping lemma"
+      - "Describe how the algorithm works"
+  
+  trace:
+    keywords:
+      - trace
+      - follow
+      - track
+      - execute
+    description: "Questions asking to trace execution"
+    examples:
+      - "Trace the execution of the input string"
+      - "Follow the path through the automaton"
+  
+  convert:
+    keywords:
+      - convert
+      - transform
+      - translate
+    description: "Questions asking to convert between representations"
+    examples:
+      - "Convert the NFA to an FA"
+      - "Transform to CNF"
+
+
+# ========================================
+# 9. config/exam_formats.yaml
+# ========================================
+
+"""
+Exam Format Definitions
+Save this as: config/exam_formats.yaml
+"""
+
+EXAM_FORMATS_YAML = """
+# Exam Paper Format Definitions
+
+formats:
+  unisa_standard:
+    name: "UNISA Standard Format"
+    structure:
+      - section: "Header"
+        contains:
+          - module_code
+          - exam_date
+          - duration
+          - total_marks
+      
+      - section: "Instructions"
+        contains:
+          - general_instructions
+          - answer_requirements
+      
+      - section: "Questions"
+        numbering: "numeric"  # 1, 2, 3
+        sub_numbering: "roman"  # (i), (ii), (iii)
+    
+    markers:
+      question_start: "QUESTION"
+      marks: "[XX marks]"
+      end_of_paper: "END"
+  
+  multiple_choice:
+    name: "Multiple Choice Format"
+    structure:
+      - section: "Questions"
+        numbering: "numeric"
+        options: ["A", "B", "C", "D"]
+    
+    markers:
+      question_start: "\\d+\\."
+      option_start: "[A-D]\\)"
+"""

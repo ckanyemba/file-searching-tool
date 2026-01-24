@@ -1,15 +1,11 @@
+# ========================================
+# 2. src/models/__init__.py
+# ========================================
+
 """
-Core functionality modules
+Models package
 """
 
-from .question_detector import QuestionDetector
-from .question_classifier import QuestionClassifier
-from .similarity_engine import QuestionSimilarityEngine
-from .vector_store import VectorStore
+from .sentence_transformer import SentenceTransformerModel
 
-__all__ = [
-    'QuestionDetector',
-    'QuestionClassifier',
-    'QuestionSimilarityEngine',
-    'VectorStore',
-]
+__all__ = ['SentenceTransformerModel']

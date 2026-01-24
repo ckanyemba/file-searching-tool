@@ -1,0 +1,35 @@
+UNIVERSITY OF SOUTH AFRICA
+COS3701 - THEORETICAL COMPUTER SCIENCE III
+EXAMINATION: OCTOBER/NOVEMBER 2025
+
+QUESTION 1 [25 marks]
+
+1. Prove that the language PALINDROME is non-context-free. [10 marks]
+
+2. (i) Build a TM that accepts the language {a^n b^n}. [8 marks]
+   (ii) Trace the execution of your TM on the input string "aabb". [7 marks]
+
+QUESTION 2 [30 marks]
+
+3. Consider the following grammar:
+   S → aSb | ab
+   
+   (i) Show that this grammar generates {a^n b^n}. [10 marks]
+   (ii) Convert this grammar to Chomsky Normal Form. [10 marks]
+   (iii) Is this grammar ambiguous? Justify your answer. [10 marks]
+
+QUESTION 3 [25 marks]
+
+4. (i) Draw a PDA that accepts PALINDROME. [12 marks]
+   (ii) Explain how your PDA works. [8 marks]
+   (iii) Give an example trace. [5 marks]
+
+QUESTION 4 [20 marks]
+
+5. Find a regular expression for the language of all strings over {a,b} 
+   that contain at least two a's. [10 marks]
+
+6. Prove that the language {a^n b^n a^n} is not context-free using the 
+   pumping lemma. [10 marks]
+
+END OF EXAMINATION

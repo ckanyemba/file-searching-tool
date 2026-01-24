@@ -1,0 +1,24 @@
+# Test Queries for COS3701 Question Search
+
+# Proof Questions
+Prove that PALINDROME is non-context-free
+Show that the language is regular
+Demonstrate that the grammar is ambiguous
+
+# Build Questions
+Build a TM that accepts {a^n b^n}
+Construct a PDA for PALINDROME
+Design an FA for the language
+
+# Find Questions
+Find a CFG for the language
+Determine if the string is in the language
+Calculate the number of states needed
+
+# Trace Questions
+Trace the execution on input "aabb"
+Follow the path through the automaton
+
+# Convert Questions
+Convert the NFA to an FA
+Transform the grammar to CNF

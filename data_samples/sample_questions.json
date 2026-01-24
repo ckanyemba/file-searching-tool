@@ -1,0 +1,29 @@
+[
+  {
+    "question": "Prove that the language PALINDROME is non-context-free.",
+    "file": "sample_exam.txt",
+    "type": "proof",
+    "location": {
+      "line": 8
+    },
+    "marks": 10
+  },
+  {
+    "question": "Build a TM that accepts the language {a^n b^n}.",
+    "file": "sample_exam.txt",
+    "type": "build",
+    "location": {
+      "line": 10
+    },
+    "marks": 8
+  },
+  {
+    "question": "Trace the execution of your TM on the input string 'aabb'.",
+    "file": "sample_exam.txt",
+    "type": "trace",
+    "location": {
+      "line": 11
+    },
+    "marks": 7
+  }
+]
