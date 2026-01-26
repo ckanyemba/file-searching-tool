@@ -139,6 +139,28 @@ async function performSearch(query) {
     }
 }
 
+// Add after existing image processing
+async function searchByDiagram(imageFile) {
+    const formData = new FormData();
+    formData.append('diagram', imageFile);
+    
+    showLoading('Comparing diagrams...');
+    
+    try {
+        const response = await fetch(`${API_URL}/api/search/diagram`, {
+            method: 'POST',
+            body: formData
+        });
+        
+        const data = await response.json();
+        displayResults(data.results, 'Similar Diagrams');
+    } catch (error) {
+        console.error('Diagram search error:', error);
+    } finally {
+        hideLoading();
+    }
+}
+
 function displayResults(resultsList, query) {
     if (!resultsList || resultsList.length === 0) {
         results.innerHTML = `

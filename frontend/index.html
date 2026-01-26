@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>COS3701 Question Search</title>
+    <title>COS3701 - Questions & Solutions</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -12,14 +12,24 @@
             <h1>🔍 COS3701 Question Search</h1>
             <div class="stats">
                 <span>Questions: <strong id="totalQuestions">0</strong></span>
-                <span>Files: <strong id="totalFiles">0</strong></span>
+                <span>Solutions: <strong id="totalSolutions">0</strong></span>
             </div>
         </div>
     </header>
 
     <main class="main">
         <div class="container">
-            <!-- Search Tabs -->
+            <!-- Main Content Tabs: Questions vs Solutions -->
+            <div class="content-tabs">
+                <button class="content-tab active" data-section="questions">
+                    📝 Questions
+                </button>
+                <button class="content-tab" data-section="solutions">
+                    ✅ Solutions
+                </button>
+            </div>
+
+            <!-- Search Section -->
             <div class="tabs">
                 <button class="tab active" data-tab="text">📝 Text Search</button>
                 <button class="tab" data-tab="image">📷 Image Search</button>
@@ -28,19 +38,10 @@
             <!-- Text Search -->
             <div id="textTab" class="tab-content active">
                 <div class="search-box">
-                    <textarea 
-                        id="searchInput" 
-                        class="search-input" 
-                        placeholder="Type or paste your question here..."
-                        rows="3"
-                    ></textarea>
+                    <textarea id="searchInput" class="search-input" 
+                              placeholder="Search questions or solutions..." 
+                              rows="3"></textarea>
                     <button id="searchBtn" class="search-btn">🔍 Search</button>
-                </div>
-                <div class="examples">
-                    <span>Examples:</span>
-                    <button class="example-btn" data-query="Prove that PALINDROME is non-context-free">Prove PALINDROME</button>
-                    <button class="example-btn" data-query="Build a TM that accepts {a^n b^n}">Build TM</button>
-                    <button class="example-btn" data-query="Find a CFG for the language">Find CFG</button>
                 </div>
             </div>
 
@@ -49,20 +50,18 @@
                 <div class="upload-box">
                     <div class="upload-area" id="uploadArea">
                         <div class="upload-icon">📷</div>
-                        <h3>Upload Question Image</h3>
-                        <p>Take a photo or upload an image of the question</p>
-                        <input type="file" id="imageInput" accept="image/*" capture="camera" hidden>
+                        <h3>Upload Question/Diagram</h3>
+                        <input type="file" id="imageInput" accept="image/*" hidden>
                         <button class="btn-primary" onclick="document.getElementById('imageInput').click()">
-                            📸 Choose Image
+                            Choose Image
                         </button>
                     </div>
-                    
                     <div id="imagePreview" class="image-preview" style="display: none;">
                         <img id="previewImg" alt="Preview">
-                        <div class="ocr-text" id="ocrText"></div>
+                        <div id="ocrText" class="ocr-text"></div>
                         <div class="btn-group">
-                            <button id="clearBtn" class="btn-secondary">❌ Clear</button>
-                            <button id="searchImageBtn" class="btn-primary">🔍 Search</button>
+                            <button id="clearBtn" class="btn-secondary">Clear</button>
+                            <button id="searchImageBtn" class="btn-primary">Search</button>
                         </div>
                     </div>
                 </div>
@@ -70,17 +69,11 @@
 
             <!-- Options -->
             <div class="options">
-                <label>Type: 
-                    <select id="searchType">
-                        <option value="semantic">Semantic</option>
-                        <option value="exact">Exact</option>
-                    </select>
-                </label>
                 <label>Results: 
                     <select id="topK">
-                        <option value="5">5</option>
                         <option value="10">10</option>
                         <option value="20">20</option>
+                        <option value="50">50</option>
                     </select>
                 </label>
             </div>
@@ -97,17 +90,17 @@
             <!-- Empty State -->
             <div id="emptyState" class="empty-state">
                 <div class="empty-icon">🔍</div>
-                <h2>Search Questions</h2>
-                <p>Type a question or upload an image to find similar questions</p>
+                <h2>Search Questions or Solutions</h2>
+                <p>Use the tabs above to switch between questions and solutions</p>
             </div>
         </div>
     </main>
 
-    <!-- Result Modal -->
+    <!-- Modal -->
     <div id="modal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>Question Details</h2>
+                <h2 id="modalTitle">Details</h2>
                 <button class="modal-close">&times;</button>
             </div>
             <div id="modalBody" class="modal-body"></div>
@@ -115,6 +108,6 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
-    <script src="app.js"></script>
+    <script src="app_enhanced.js"></script>
 </body>
 </html>

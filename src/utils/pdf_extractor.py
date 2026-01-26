@@ -1,158 +1,228 @@
 """
-Enhanced Document Processor for PDA/Mathematical Content
+Enhanced Processor - Separates Questions and Solutions
 """
 
 import re
 from pathlib import Path
-from typing import List, Dict
+from typing import List, Dict, Tuple
 import logging
 
-logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 try:
-    import fitz  # PyMuPDF
+    import fitz
     HAS_PYMUPDF = True
 except ImportError:
     HAS_PYMUPDF = False
 
-class DocumentProcessor:
-    """Extract text and questions including mathematical notation"""
+
+class QuestionSolutionDetector:
+    """Detect and separate questions from solutions"""
     
     def __init__(self):
+        # Patterns that indicate solutions section
+        self.solution_markers = [
+            r'\bSolutions?\b',
+            r'\bAnswers?\b',
+            r'\bMemo\b',
+            r'\bSolution\s+to\b',
+            r'\bAnswer\s+to\b',
+            r'\bWorked\s+Solutions?\b',
+            r'\bDetailed\s+Solutions?\b',
+        ]
+        
+        # Question patterns
         self.question_patterns = [
-            # Standard patterns
-            r'\b\d+\.\s+.*?(?:[.?]|$)',
+            r'Question\s+\d+',
+            r'Problem\s+\d+',
+            r'Example\s+\d+',
+            r'\b\d+\.\s+',
+            r'\(([ivxlcdm]+)\)',
+        ]
+    
+    def detect_section_type(self, text: str, page_num: int) -> str:
+        """Detect if section contains questions or solutions"""
+        text_lower = text.lower()
+        
+        # Check for solution markers
+        for pattern in self.solution_markers:
+            if re.search(pattern, text, re.IGNORECASE):
+                return 'solution'
+        
+        # Heuristics for solutions:
+        # - Contains "Therefore", "Hence", "Thus"
+        # - Has step-by-step explanations
+        # - References previous questions
+        solution_indicators = [
+            r'\btherefore\b',
+            r'\bhence\b',
+            r'\bthus\b',
+            r'\bwe can see that\b',
+            r'\bfrom the above\b',
+            r'\bstep \d+',
+            r'\bsolution:\b',
+        ]
+        
+        solution_score = sum(1 for pattern in solution_indicators 
+                           if re.search(pattern, text_lower))
+        
+        if solution_score >= 2:
+            return 'solution'
+        
+        # Check if it looks like questions
+        question_score = sum(1 for pattern in self.question_patterns 
+                           if re.search(pattern, text, re.IGNORECASE))
+        
+        if question_score >= 1:
+            return 'question'
+        
+        return 'unknown'
+    
+    def split_questions_solutions(self, pages_data: List[Dict]) -> Tuple[List[Dict], List[Dict]]:
+        """Split pages into questions and solutions"""
+        questions = []
+        solutions = []
+        
+        current_section = 'question'  # Default to questions first
+        
+        for page_data in pages_data:
+            text = page_data.get('text', '')
+            page_num = page_data.get('page')
+            
+            # Detect section type
+            section_type = self.detect_section_type(text, page_num)
+            
+            # Update current section if we found a clear marker
+            if section_type != 'unknown':
+                current_section = section_type
+            
+            # Add to appropriate list
+            if current_section == 'question':
+                questions.append(page_data)
+            else:
+                solutions.append(page_data)
+        
+        return questions, solutions
+
+
+class DocumentProcessor:
+    """Process documents with question/solution separation"""
+    
+    def __init__(self):
+        self.detector = QuestionSolutionDetector()
+        self.question_patterns = [
             r'Example\s+\d+.*?(?=Example|$)',
-            
-            # PDA/Mathematical patterns
-            r'Draw.*?(?:PDA|automaton|machine).*?(?:[.?]|(?=\n\n))',
-            r'Build.*?(?:PDA|TM|FA|automaton).*?(?:[.?]|(?=\n\n))',
-            r'L\s*=\s*\{.*?\}',  # Language definitions
-            r'Σ\s*=\s*\{.*?\}',  # Alphabet definitions
-            
-            # Question types
-            r'\bProve that.*?[.]',
-            r'\bShow that.*?[.]',
-            r'\bFind.*?[.]',
-            r'\bConstruct.*?[.]',
+            r'Question\s+\d+.*?(?=Question|$)',
+            r'Draw.*?(?:PDA|DPDA|automaton|machine|FA|TM).*?[.?]',
+            r'Build.*?(?:PDA|TM|FA).*?[.?]',
+            r'Prove.*?[.]',
+            r'Show.*?[.]',
+            r'Find.*?[.]',
+            r'L\s*=\s*\{[^}]+\}',
         ]
     
     def extract_from_pdf(self, file_path: str) -> Dict:
-        """Enhanced PDF extraction"""
+        """Extract with question/solution separation"""
         if not HAS_PYMUPDF:
             return None
         
-        text_content = []
         try:
             doc = fitz.open(file_path)
+            pages_data = []
             
             for page_num, page in enumerate(doc):
-                # Extract text
                 text = page.get_text()
-                
-                # Also try to get text with layout preservation
-                text_dict = page.get_text("dict")
-                
                 if text.strip():
-                    text_content.append({
+                    pages_data.append({
                         'page': page_num + 1,
                         'text': text,
-                        'source': 'direct'
-                    })
-                
-                # Extract images (for diagrams)
-                images = page.get_images()
-                for img_index, img in enumerate(images):
-                    text_content.append({
-                        'page': page_num + 1,
-                        'type': 'diagram',
-                        'image_index': img_index,
-                        'source': 'image'
+                        'source': 'pdf'
                     })
             
             doc.close()
             
+            # Split into questions and solutions
+            questions_pages, solutions_pages = self.detector.split_questions_solutions(pages_data)
+            
             return {
                 'file_path': file_path,
                 'file_type': 'pdf',
-                'text_content': text_content,
+                'questions_pages': questions_pages,
+                'solutions_pages': solutions_pages,
+                'total_pages': len(pages_data)
             }
         except Exception as e:
             logger.error(f"Error: {e}")
             return None
     
     def process_file(self, file_path: str) -> Dict:
-        """Process file"""
         path = Path(file_path)
         if path.suffix.lower() == '.pdf':
             return self.extract_from_pdf(str(path))
         return None
     
-    def clean_mathematical_text(self, text: str) -> str:
-        """Clean mathematical notation for better matching"""
-        # Normalize common math symbols
-        text = re.sub(r'\s+', ' ', text)
-        text = text.replace('∑', 'Sigma')
-        text = text.replace('Σ', 'Sigma')
-        text = text.replace('∈', 'in')
-        text = text.replace('≥', '>=')
-        text = text.replace('≤', '<=')
-        return text
-    
     def detect_questions(self, text: str) -> List[str]:
-        """Detect questions including PDA/mathematical content"""
-        text_clean = self.clean_mathematical_text(text)
-        
+        """Detect questions"""
         questions = []
-        
-        # Detect by patterns
         for pattern in self.question_patterns:
-            matches = re.finditer(pattern, text_clean, re.MULTILINE | re.IGNORECASE | re.DOTALL)
+            matches = re.finditer(pattern, text, re.MULTILINE | re.IGNORECASE | re.DOTALL)
             for match in matches:
-                question = match.group(0).strip()
-                # Only keep substantial questions
-                if len(question) > 15 and len(question) < 500:
-                    questions.append(question)
-        
-        # Detect Example blocks
-        example_pattern = r'Example\s+\d+\s*([\s\S]*?)(?=Example\s+\d+|$)'
-        for match in re.finditer(example_pattern, text_clean, re.IGNORECASE):
-            example_text = match.group(0).strip()
-            if len(example_text) > 20:
-                questions.append(example_text)
-        
-        # Deduplicate
+                q = match.group(0).strip()
+                if 15 < len(q) < 500:
+                    questions.append(q)
         return list(set(questions))
     
     def extract_questions_from_document(self, file_path: str) -> List[Dict]:
-        """Extract questions"""
+        """Extract questions AND solutions separately"""
         doc_data = self.process_file(file_path)
         if not doc_data:
             return []
         
-        all_questions = []
+        all_items = []
         
-        for content in doc_data.get('text_content', []):
-            if content.get('type') == 'diagram':
-                # Mark that this page has diagrams
-                all_questions.append({
-                    'question': f"Page {content['page']} contains diagram",
+        # Process questions
+        for page_data in doc_data.get('questions_pages', []):
+            text = page_data.get('text', '')
+            questions = self.detect_questions(text)
+            
+            for q in questions:
+                all_items.append({
+                    'question': q,
                     'file': file_path,
-                    'location': content,
-                    'type': 'diagram',
-                    'has_diagram': True
+                    'location': page_data,
+                    'type': 'question',
+                    'section': 'questions'
                 })
-            else:
-                text = content.get('text', '')
-                questions = self.detect_questions(text)
-                
-                for q in questions:
-                    all_questions.append({
-                        'question': q,
-                        'file': file_path,
-                        'location': content,
-                        'type': 'text'
-                    })
         
-        return all_questions
+        # Process solutions
+        for page_data in doc_data.get('solutions_pages', []):
+            text = page_data.get('text', '')
+            
+            # Extract solution text (keep more context)
+            solution_blocks = self.extract_solution_blocks(text)
+            
+            for solution in solution_blocks:
+                all_items.append({
+                    'question': solution,  # Solution text
+                    'file': file_path,
+                    'location': page_data,
+                    'type': 'solution',
+                    'section': 'solutions'
+                })
+        
+        return all_items
+    
+    def extract_solution_blocks(self, text: str) -> List[str]:
+        """Extract solution blocks"""
+        # Split by question numbers
+        pattern = r'(Question\s+\d+|Problem\s+\d+|Example\s+\d+|\d+\.)'
+        parts = re.split(pattern, text, flags=re.IGNORECASE)
+        
+        solutions = []
+        for i in range(1, len(parts), 2):
+            if i+1 < len(parts):
+                solution = parts[i] + parts[i+1]
+                if len(solution.strip()) > 50:
+                    solutions.append(solution.strip())
+        
+        return solutions if solutions else [text.strip()]
